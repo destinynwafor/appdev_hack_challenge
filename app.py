@@ -9,7 +9,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///%s' % db_filename
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
  
- 
+
 db.init_app(app)
 with app.app_context():
     db.create_all()
@@ -28,7 +28,7 @@ def create_club():
     return json.dumps({'success': True, 'data': club.serialize()}), 201
 
 
-@app.route('/api/class/<int: club_id>/', methods=['DELETE'])
+@app.route('/api/club/<int:club_id>/', methods=['DELETE'])
 def delete_club(club_id):
     club = Class.query.filter_by(id=club_id).first()
     if club is not None:
