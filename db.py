@@ -41,14 +41,12 @@ class Club(db.Model):
     officers = db.relationship("User", secondary=officer_association_table)
 
     def  __init__(self, **kwargs):
-        self.code = kwargs.get('code', '')
         self.name = kwargs.get('name', '')
         self.description = kwargs.get('description', '')
 
     def serialize(self):
         return {
             'id': self.id,
-            'code': self.code,
             'name': self.name,
             'description': self.description,
             'officers': [of.serialize() for of in self.officers],
