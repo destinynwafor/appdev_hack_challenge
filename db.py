@@ -60,20 +60,23 @@ class Event(db.Model):
     __tablename__ = 'event'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String, nullable=False)
-    day = db.Column(db.Integer, nullable=False)
-    time = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.String, nullable=False) #UTC formatted string 
+    start_time = db.Column(db.Integer, nullable=False)
+    end_time = db.Column(db.Integer, nullable=False)
     club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=False)
 
     def __init__(self, **kwargs):
         self.description = kwargs.get('description', '')
-        self.day = kwargs.get('day', 1)
-        self.time = kwargs.get('time', 10)
+        self.date = kwargs.get('date', 1)
+        self.start_time = kwargs.get('time', 10)
+        self.end_time = kwargs.get('time', 10)
         self.club_id = kwargs.get('club_id')
 
     def serialize(self):
         return {
             'id': self.id,
             'description': self.description,
-            'day': self.day,
-            'time': self.time,
+            'date': self.date,
+            'start_time': self.start_time,
+            'end_time': self.end_time
         }
