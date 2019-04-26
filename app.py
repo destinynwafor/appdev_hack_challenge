@@ -42,12 +42,12 @@ def get_club(club_id):
     club = Club.query.filter_by(id=club_id).first()
     if club is None:
         return json.dumps({'success': False, 'error': "Club not found!"}), 404
-    result = {'success': True, 'data': post.serialize()}
+    result = {'success': True, 'data': club.serialize()}
     return json.dumps(result), 200
 
 @app.route('/api/club/<int:club_id>/', methods=['DELETE'])
 def delete_club(club_id):
-    club = Class.query.filter_by(id=club_id).first()
+    club = Club.query.filter_by(id=club_id).first()
     if club is not None:
         db.session.delete(club)
         db.session.commit()
