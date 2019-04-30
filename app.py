@@ -20,7 +20,7 @@ with app.app_context():
 @app.route('/api/clubs/')
 def get_all_clubs():
     clubs = Club.query.all()
-    club_list = []
+    club_list = [] 
     for club in clubs:
         club_list.append(club.serialize())
     res = {'success': True, 'data': club_list}
@@ -53,8 +53,32 @@ def delete_club(club_id):
         db.session.commit()
         return json.dumps({'success': True, 'data': club.serialize()}), 200
     return json.dumps({'success': False, 'error': 'Club not found!'}), 404
-    
-@app.route('/')
+
+@app.route('/api/users/', methods=['POST'])
+def create_user():
+    contents = json.loads(request.data)
+    user = User(
+        name=contents.get('name'),
+        netid=contents.get('netid'),
+    )
+    db.session.add(user)
+    db.session.commit()
+    return json.dumps({'success': True, 'data': user.serialize()}), 201
+
+@app.route('/api/user/<int:user_id>/')
+def get_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user is not None:
+        return json.dumps({'success': True, 'data': user.serialize()}), 200
+    return json.dumps({'success': False, 'data': 'User not found'}), 200
+ 
+@app.route('/api/events/<int:club_id>/')
+def get_event_by_club(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user is not None:
+        return json.dumps({'success': True, 'data': user.serialize()}), 200
+    return json.dumps({'success': False, 'data': 'User not found'}), 200@app.route('/')
+
 def root():
     return 'Hello world!'
 

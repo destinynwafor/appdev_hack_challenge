@@ -13,6 +13,11 @@ officer_association_table = db.Table('officers', db.Model.metadata,
     db.Column('club_id', db.Integer, db.ForeignKey('club.id'))
 )
 
+attendee_association_table = db.Table('attendees', db.Model.metadata,
+    db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
+)
+
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -63,6 +68,8 @@ class Event(db.Model):
     end_time = db.Column(db.Integer, nullable=False)
     club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=False)
 
+    attendees = db.relationship("User", secondary=attendee_association_table)
+
     def __init__(self, **kwargs):
         self.description = kwargs.get('description', '')
         self.date = kwargs.get('date', "1") 
@@ -76,5 +83,6 @@ class Event(db.Model):
             'description': self.description,
             'date': self.date,
             'start_time': self.start_time,
-            'end_time': self.end_time
+            'end_time': self.end_time,
+            'attendees': [at.serialize() for at in self.attendees],
         }
