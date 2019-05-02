@@ -19,7 +19,7 @@ with app.app_context():
 
 @app.route('/')
 def root():
-    return 'Hello world2!'
+    return 'Cornell Club Events'
     #return environ['GOOGLE_CLIENT_ID']
     
 @app.route('/api/clubs/')
@@ -96,12 +96,33 @@ def create_event(club_id):
     db.session.commit()
     return json.dumps({'success': True, 'data': event.serialize()}), 201
 
-@app.route('/api/events/<int:club_id>/')
-def get_event_by_club(user_id):
+@app.route('/api/club/<int:club_id>/add/', methods=['POST'])
+def add_user_to_club(club_id):
+    contents = json.loads(request.data)
+    user_type = contents.get('type', '')
+    user_id = contents.get('user_id', '')
+
     user = User.query.filter_by(id=user_id).first()
-    if user is not None:
-        return json.dumps({'success': True, 'data': user.serialize()}), 200
-    return json.dumps({'success': False, 'data': 'User not found'}), 200@app.route('/')
+    club = Club.query.filter_by(id=club_id).first()
+
+    if user is None or club is None:
+        return json.dumps({'success': False, 'error': 'Club or User not found'}), 404
+    
+    if user_type == 'member':
+        club.members.append(user)
+    else:
+        club.officers.append(user)
+
+    db.session.add(club)
+    db.session.commit()
+    return json.dumps({'success': True, 'data': club.serialize()}), 200
+
+# @app.route('/api/events/<int:club_id>/')
+# def get_event_by_club(user_id):
+#     user = User.query.filter_by(id=user_id).first()
+#     if user is not None:
+#         return json.dumps({'success': True, 'data': user.serialize()}), 200
+#     return json.dumps({'success': False, 'data': 'User not found'}), 200@app.route('/')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=4000, debug=True)

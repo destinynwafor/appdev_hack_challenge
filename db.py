@@ -3,8 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-student_association_table = db.Table('students', db.Model.metadata,
-    db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
+member_association_table = db.Table('members', db.Model.metadata,
+    db.Column('member_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('club_id', db.Integer, db.ForeignKey('club.id'))
 )
 
@@ -14,7 +14,7 @@ officer_association_table = db.Table('officers', db.Model.metadata,
 )
 
 attendee_association_table = db.Table('attendees', db.Model.metadata,
-    db.Column('student_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('event_id', db.Integer, db.ForeignKey('event.id'))
 )
 
@@ -42,7 +42,7 @@ class Club(db.Model):
     description = db.Column(db.String, nullable=False)
     events = db.relationship('Event', cascade='delete')
 
-    students = db.relationship("User", secondary=student_association_table)
+    members = db.relationship("User", secondary=member_association_table)
     officers = db.relationship("User", secondary=officer_association_table)
 
     def  __init__(self, **kwargs):
@@ -56,7 +56,7 @@ class Club(db.Model):
             'description': self.description,
             'officers': [of.serialize() for of in self.officers],
             'events': [ev.serialize() for ev in self.events],
-            #'students': [st.serialize() for st in self.students],
+            #'members': [me.serialize() for me in self.members],
         }
 
 class Event(db.Model):
