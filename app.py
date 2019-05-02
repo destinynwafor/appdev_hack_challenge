@@ -125,4 +125,4 @@ def add_user_to_club(club_id):
 #     return json.dumps({'success': False, 'data': 'User not found'}), 200@app.route('/')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=4000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
