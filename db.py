@@ -73,8 +73,8 @@ class Event(db.Model):
     def __init__(self, **kwargs):
         self.description = kwargs.get('description', '')
         self.date = kwargs.get('date', "1") 
-        self.start_time = kwargs.get('time', 10)
-        self.end_time = kwargs.get('time', 10)
+        self.start_time = kwargs.get('time', '10')
+        self.end_time = kwargs.get('time', '10')
         self.club_id = kwargs.get('club_id')
 
     def serialize(self):
