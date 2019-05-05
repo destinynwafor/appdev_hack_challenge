@@ -76,9 +76,8 @@ def create_event(club_id):
     event = Event(
         club_id=club_id,
         description=content.get('description'),
-        date=content.get('date'),
-        start_time=content.get('start_time'),
-        end_time=content.get('end_time'),
+        start_datetime=content.get('start_datetime'),
+        end_datetime=content.get('end_datetime'),
     )
 
     db.session.add(event)
