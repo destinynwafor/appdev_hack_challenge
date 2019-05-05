@@ -24,8 +24,15 @@ def root():
 @app.route('/api/clubs/')
 def get_all_clubs():
     clubs = Club.query.all()
-    res = {'success': True, 'data': [club.serialize() for club in clubs]}
+    res = {'success': True, 'data': {"clubs": [club.serialize() for club in clubs]}}
     return json.dumps(res), 200
+
+# @app.route('/api/clubs/goal/')
+# def get_all_clubs():
+#     clubs = Club.query.all()
+#     res = {'clubs': [club.serialize() for club in clubs]}
+#     return json.dumps(res), 200
+
 
 @app.route('/api/user/<int:user_id>/clubs/', methods=['POST'])
 def create_club(user_id):
@@ -46,16 +53,16 @@ def get_club(club_id):
     club = Club.query.filter_by(id=club_id).first()
     if club is None:
         return json.dumps({'success': False, 'error': "Club not found!"}), 404
-    result = {'success': True, 'data': club.members_serialize()}
+    result = {'success': True, 'data': {"club" : club.members_serialize()}}
     return json.dumps(result), 200
 
-@app.route('/api/user/<int:user_id>/clubs/<int:club_id>/')
-def get_clubs_by_user(user_id, club_id):
+@app.route('/api/user/<int:user_id>/clubs/')
+def get_clubs_by_user(user_id):
     user = User.query.filter_by(id=user_id).first()
     if user is None:
         return json.dumps({'success': False, 'data': 'User not found'}), 200
     clubs = user.clubs
-    result = {'success': True, 'data': clubs.serialize()}
+    result = {'success': True, 'data': clubs}
     return json.dumps(result), 200
 
 @app.route('/api/club/<int:club_id>/', methods=['DELETE'])
@@ -98,7 +105,7 @@ def create_event(user_id, club_id):
     # db.session.commit()
     # return json.dumps({'success': True, 'data': event.extended_serialize()}), 201
 
-@app.route('/api/club/<int:club_id>/event/<int:event_id>/')
+@app.route('/api/club/<int:club_id>/event/<int:event_id//')
 def get_event_from_club(club_id, event_id):
     club = Club.query.filter_by(id=club_id).first()
     if club is None:
@@ -107,6 +114,15 @@ def get_event_from_club(club_id, event_id):
         return json.dumps({'success': False, 'error': "Event not found!"}), 404
     event = club.events[event_id]
     result = {'success': True, 'data': event.extended_serialize()}
+    return json.dumps(result), 200
+
+@app.route('/api/user/<int:user_id>/clubs/')
+def get_all_events_by_club(club_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        return json.dumps({'success': False, 'data': 'User not found'}), 200
+    clubs = user.clubs
+    result = {'success': True, 'data': clubs}
     return json.dumps(result), 200
 
 @app.route('/api/users/', methods=['POST'])
