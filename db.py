@@ -42,8 +42,8 @@ class Club(db.Model):
     description = db.Column(db.String, nullable=False)
     events = db.relationship('Event', cascade='delete')
 
-    members = db.relationship("User", secondary=member_association_table)
-    officers = db.relationship("User", secondary=officer_association_table)
+    #members = db.relationship("User", secondary=member_association_table)
+    #officers = db.relationship("User", secondary=officer_association_table)
 
     def  __init__(self, **kwargs):
         self.name = kwargs.get('name', '')
@@ -54,8 +54,8 @@ class Club(db.Model):
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'officers': [of.serialize() for of in self.officers],
-            'events': [ev.serialize() for ev in self.events],
+            #'officers': [of.serialize() for of in self.officers],
+            #'events': [ev.serialize() for ev in self.events],
             #'members': [me.serialize() for me in self.members],
         }
 
