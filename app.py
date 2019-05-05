@@ -27,12 +27,13 @@ def get_all_clubs():
     res = {'success': True, 'data': {"clubs": [club.serialize() for club in clubs]}}
     return json.dumps(res), 200
 
-# @app.route('/api/clubs/goal/')
-# def get_all_clubs():
-#     clubs = Club.query.all()
-#     res = {'clubs': [club.serialize() for club in clubs]}
-#     return json.dumps(res), 200
-
+@app.route('/api/club/<int:club_id>/')
+def get_club(club_id):
+    club = Club.query.filter_by(id=club_id).first()
+    if club is None:
+        return json.dumps({'success': False, 'error': "Club not found!"}), 404
+    result = {'success': True, 'data': {"club" : club.members_serialize()}}
+    return json.dumps(result), 200
 
 @app.route('/api/user/<int:user_id>/clubs/', methods=['POST'])
 def create_club(user_id):
@@ -47,14 +48,6 @@ def create_club(user_id):
     db.session.add(club)
     db.session.commit()
     return json.dumps({'success': True, 'data': club.officers_serialize()}), 201
-
-@app.route('/api/club/<int:club_id>/')
-def get_club(club_id):
-    club = Club.query.filter_by(id=club_id).first()
-    if club is None:
-        return json.dumps({'success': False, 'error': "Club not found!"}), 404
-    result = {'success': True, 'data': {"club" : club.members_serialize()}}
-    return json.dumps(result), 200
 
 @app.route('/api/user/<int:user_id>/clubs/')
 def get_clubs_by_user(user_id):
@@ -116,13 +109,13 @@ def get_event_from_club(club_id, event_id):
     result = {'success': True, 'data': event.extended_serialize()}
     return json.dumps(result), 200
 
-@app.route('/api/user/<int:user_id>/clubs/')
+@app.route('/api/club/<int:club_id>/events/')
 def get_all_events_by_club(club_id):
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        return json.dumps({'success': False, 'data': 'User not found'}), 200
-    clubs = user.clubs
-    result = {'success': True, 'data': clubs}
+    club = Club.query.filter_by(id=club_id).first()
+    if club is None:
+        return json.dumps({'success': False, 'data': { "club": 'Club not found'}}), 200
+    events = club.events
+    result = {'success': True, 'data': {"events": events}}
     return json.dumps(result), 200
 
 @app.route('/api/users/', methods=['POST'])
