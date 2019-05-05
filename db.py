@@ -116,8 +116,8 @@ class Event(db.Model):
         return {
             'id': self.id,
             'description': self.description,
-            'start_datetime': self.start_datetime,
-            'end_datetime': self.end_datetime,
+            # 'start_datetime': self.start_datetime,
+            # 'end_datetime': self.end_datetime,
         }
     
     def extended_serialize(self):
@@ -126,6 +126,6 @@ class Event(db.Model):
             'description': self.description,
             'start_datetime': self.start_datetime,
             'end_datetime': self.end_datetime,
-            'attendees': [at.serialize() for at in self.attendees]
+            'attendees': [at.serialize() for at in self.attendees],
         }
     

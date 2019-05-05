@@ -55,7 +55,7 @@ def get_clubs_by_user(user_id):
     if user is None:
         return json.dumps({'success': False, 'data': 'User not found'}), 200
     clubs = user.clubs
-    result = {'success': True, 'data': clubs}
+    result = {'success': True, 'data': {"clubs": [club.serialize() for club in clubs]}}
     return json.dumps(result), 200
 
 @app.route('/api/club/<int:club_id>/', methods=['DELETE'])
@@ -98,7 +98,7 @@ def create_event(user_id, club_id):
     # db.session.commit()
     # return json.dumps({'success': True, 'data': event.extended_serialize()}), 201
 
-@app.route('/api/club/<int:club_id>/event/<int:event_id//')
+@app.route('/api/club/<int:club_id>/event/<int:event_id>/')
 def get_event_from_club(club_id, event_id):
     club = Club.query.filter_by(id=club_id).first()
     if club is None:
@@ -115,7 +115,7 @@ def get_all_events_by_club(club_id):
     if club is None:
         return json.dumps({'success': False, 'data': { "club": 'Club not found'}}), 200
     events = club.events
-    result = {'success': True, 'data': {"events": events}}
+    result = {'success': True, 'data': {"events": [event.serialize() for event in events]}}
     return json.dumps(result), 200
 
 @app.route('/api/users/', methods=['POST'])
@@ -152,8 +152,10 @@ def add_user_to_club(club_id):
         club.members.append(user)
     else:
         club.officers.append(user)
-
+    
+    user.clubs.append(club)
     db.session.add(club)
+    db.session.add(user)
     db.session.commit()
     
     if user_type == 'member':
