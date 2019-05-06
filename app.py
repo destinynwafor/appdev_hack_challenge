@@ -27,6 +27,21 @@ def get_all_clubs():
     res = {'success': True, 'data': {"clubs": [club.serialize() for club in clubs]}}
     return json.dumps(res), 200
 
+@app.route('/api/club/<int:club_id>/events/')
+def get_all_events_by_club(club_id):
+    club = Club.query.filter_by(id=club_id).first()
+    if club is None:
+        return json.dumps({'success': False, 'data': { "club": 'Club not found'}}), 200
+    events = club.events
+    result = {'success': True, 'data': {"events": [event.serialize() for event in events]}}
+    return json.dumps(result), 200
+
+
+"""
+THE REMAINING CODE WAS NOT IMPLEMENTED BY IOS
+"""
+
+
 @app.route('/api/club/<int:club_id>/')
 def get_club(club_id):
     club = Club.query.filter_by(id=club_id).first()
@@ -35,10 +50,23 @@ def get_club(club_id):
     result = {'success': True, 'data': {"club" : club.members_serialize()}}
     return json.dumps(result), 200
 
-@app.route('/api/user/<int:user_id>/clubs/', methods=['POST'])
-def create_club(user_id):
+@app.route('/api/clubs/', methods=['POST'])
+def create_club():
     contents = json.loads(request.data)
-    user = User.query.filter_by(id=user_id).first()
+    # user = User.query.filter_by(id=user_id).first()
+    club = Club(
+        name = contents.get('name'),
+        description = contents.get('description')
+    )
+    # club.officers.append(user)
+    # club.users.append(user)
+    db.session.add(club)
+    db.session.commit()
+    return json.dumps({'success': True, 'data': club.officers_serialize()}), 201
+
+@app.route('/api/club/<int:club_id>/', methods=['POST'])
+def edit_club(club_id):
+    contents = json.loads(request.data)
     club = Club(
         name = contents.get('name'),
         description = contents.get('description')
@@ -48,15 +76,6 @@ def create_club(user_id):
     db.session.add(club)
     db.session.commit()
     return json.dumps({'success': True, 'data': club.officers_serialize()}), 201
-
-@app.route('/api/user/<int:user_id>/clubs/')
-def get_clubs_by_user(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    if user is None:
-        return json.dumps({'success': False, 'data': 'User not found'}), 200
-    clubs = user.clubs
-    result = {'success': True, 'data': {"clubs": [club.serialize() for club in clubs]}}
-    return json.dumps(result), 200
 
 @app.route('/api/club/<int:club_id>/', methods=['DELETE'])
 def delete_club(club_id):
@@ -109,15 +128,6 @@ def get_event_from_club(club_id, event_id):
     result = {'success': True, 'data': event.extended_serialize()}
     return json.dumps(result), 200
 
-@app.route('/api/club/<int:club_id>/events/')
-def get_all_events_by_club(club_id):
-    club = Club.query.filter_by(id=club_id).first()
-    if club is None:
-        return json.dumps({'success': False, 'data': { "club": 'Club not found'}}), 200
-    events = club.events
-    result = {'success': True, 'data': {"events": [event.serialize() for event in events]}}
-    return json.dumps(result), 200
-
 @app.route('/api/users/', methods=['POST'])
 def create_user():
     contents = json.loads(request.data)
@@ -135,6 +145,15 @@ def get_user(user_id):
     if user is not None:
         return json.dumps({'success': True, 'data': user.extended_serialize()}), 200
     return json.dumps({'success': False, 'data': 'User not found'}), 200
+
+@app.route('/api/user/<int:user_id>/clubs/')
+def get_clubs_by_user(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        return json.dumps({'success': False, 'data': 'User not found'}), 200
+    clubs = user.clubs
+    result = {'success': True, 'data': {"clubs": [club.serialize() for club in clubs]}}
+    return json.dumps(result), 200
 
 @app.route('/api/club/<int:club_id>/add/', methods=['POST'])
 def add_user_to_club(club_id):

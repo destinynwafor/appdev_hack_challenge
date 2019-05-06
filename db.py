@@ -74,7 +74,7 @@ class Club(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'description': self.description
+            'description': self.description,
         }
     
     def members_serialize(self):
@@ -116,8 +116,8 @@ class Event(db.Model):
         return {
             'id': self.id,
             'description': self.description,
-            # 'start_datetime': self.start_datetime,
-            # 'end_datetime': self.end_datetime,
+            'start_datetime': self.start_datetime,
+            'end_datetime': self.end_datetime,
         }
     
     def extended_serialize(self):
