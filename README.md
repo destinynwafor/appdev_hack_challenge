@@ -32,3 +32,7 @@ NSLayoutConstraint, using UICollentionView and UITableView, a navigation
 panel at the bottom of the app that navigates between Cornell Clubs and 
 Personal, and integration with Backend API. 
 
+# Additional Information
+We added a file, api.py, that is able to get links from the Cornell Events 
+webstie and event names. 
+
